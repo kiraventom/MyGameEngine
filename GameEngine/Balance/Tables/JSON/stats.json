@@ -1,0 +1,41 @@
+{
+  "Enemies": {
+    "Skeleton": {
+      "Level": 1,
+      "BaseHealth": 40,
+      "MinStrenght": 0,
+      "MaxStrenght": 5
+    },
+    "Zombie": {
+      "Level": 2,
+      "BaseHealth": 50,
+      "MinStrenght": 0,
+      "MaxStrenght": 5
+    },
+    "Rogue": {
+      "Level": 3,
+      "BaseHealth": 60,
+      "MinStrenght": 5,
+      "MaxStrenght": 10
+    },
+    "Troll": {
+      "Level": 4,
+      "BaseHealth": 70,
+      "MinStrenght": 5,
+      "MaxStrenght": 10
+    },
+    "Demon": {
+      "Level": 5,
+      "BaseHealth": 80,
+      "MinStrenght": 5,
+      "MaxStrenght": 10
+    }
+  },
+  "Allies": {
+    "Player": {
+      "BaseHealth": 100,
+      "MinStrenght": 10,
+      "MaxStrenght": 20
+    }
+  }
+}
