@@ -60,7 +60,7 @@ namespace GameEngine
 		{
 			if (Player.IsInFight)
 			{
-				var enemy = (Player.Room as EnemyRoom).Enemy;
+				var enemy = Player.Room.Enemy;
 				Player.Attack(enemy);
 				if (enemy.IsAlive)
 					enemy.Attack(Player);

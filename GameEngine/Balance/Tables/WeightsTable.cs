@@ -21,10 +21,10 @@ namespace GameEngine.Balance.Tables
 		private const string filename = "weights.json";
 		private static Weights LoadedWeights { get; }
 			
-		public static uint GetWeight(Type t)
+		public static uint GetWeight(string typename)
 		{
 			var allWeights = LoadedWeights.All;
-			bool found = allWeights.TryGetValue(t.Name, out uint weight);
+			bool found = allWeights.TryGetValue(typename, out uint weight);
 			if (found)
 				return weight;
 			else
@@ -35,10 +35,10 @@ namespace GameEngine.Balance.Tables
 		private class Weights
 		{
 			private Dictionary<string, uint> _all;
-			public Dictionary<string, uint> All => _all ??= Enemies.Concat(Items).Concat(Rooms).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			public Dictionary<string, uint> All => _all ??= Enemies.Concat(Items).Concat(RoomContents).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 			public Dictionary<string, uint> Enemies { get; set; }
 			public Dictionary<string, uint> Items { get; set; }
-			public Dictionary<string, uint> Rooms { get; set; }
+			public Dictionary<string, uint> RoomContents { get; set; }
 		}
 	}
 }

@@ -1,60 +1,74 @@
-﻿namespace GameEngine.GameObjects.Rooms
+﻿using GameEngine.Balance.Tables;
+using GameEngine.GameObjects.Actors.Enemies;
+using GameEngine.GameObjects.Usables.Items;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace GameEngine.GameObjects.Rooms
 {
-	public abstract class Room : IGameObject
+	public class Room
 	{
-		protected Room()
+		private Room(Enemy enemy = null, IEnumerable<Item> loot = null)
 		{
-
+			Enemy = enemy;
+			_loot = new List<Item>(loot ?? Enumerable.Empty<Item>());
 		}
 
-		public abstract string Name { get; }
-		public override string ToString() => this.Name;
+		[Flags]
+		internal enum RoomContents { None = 0b00, HasEnemy = 0b01, HasLoot = 0b10, HasEnemyAndLoot = 0b11 } 
 
-		public uint Depth
+		public Room Next { get; private set; }
+		public Room Previous { get; private set; }
+		public Enemy Enemy { get; }
+		public IReadOnlyList<Item> Loot => _loot;
+		public bool HasLoot => this.Loot is not null && this.Loot.Any();
+		public bool HasEnemy => this.Enemy is not null && this.Enemy.IsAlive;
+		internal bool IsEntrance => Previous is null;
+		private List<Item> _loot;
+
+		public event EventHandler<Events.LootedEventArgs> Looted;
+
+		public static uint GetDepth(Room room)
 		{
-			get
+			uint depth = 0;
+			while (room.Previous is not null)
 			{
-				uint depth = 0;
-				var room = this;
-				while (room.PreviousRoom is not null)
-				{
-					room = room.PreviousRoom;
-					++depth;
-				}
-
-				return depth;
+				room = room.Previous;
+				++depth;
 			}
-		}
 
-		internal bool IsEntrance => PreviousRoom is null;
+			return depth;
+		}
 
 		internal static void LinkRooms(Room first, Room second)
 		{
-			first.NextRoom = second;
-			second.PreviousRoom = first;
+			first.Next = second;
+			second.Previous = first;
 		}
 
-		public Room PreviousRoom { get; private set; }
-		public Room NextRoom { get; private set; }
-
-		public static Room GetFirstRoom(Room room)
+		internal static Room CreateRoom(RoomContents contents)
 		{
-			while (room.PreviousRoom is not null)
+			Enemy enemy = null;
+			List<Item> loot = null;
+			if (contents.HasFlag(RoomContents.HasEnemy))
 			{
-				room = room.PreviousRoom;
+				enemy = Balance.Balancer.CreateRandomEnemy();
+			}
+			if (contents.HasFlag(RoomContents.HasLoot))
+			{
+				loot = Balance.Balancer.CreateRandomItems(0, 3).ToList();
 			}
 
-			return room;
+			return new Room(enemy, loot);
 		}
 
-		public static Room GetLastRoom(Room room)
+		public IReadOnlyList<Item> TakeLoot()
 		{
-			while (room.NextRoom is not null)
-			{
-				room = room.NextRoom;
-			}
-
-			return room;
+			Looted.Invoke(this, new Events.LootedEventArgs(this));
+			var loot = new List<Item>(_loot);
+			_loot = null;
+			return loot.AsReadOnly();
 		}
 	}
 }

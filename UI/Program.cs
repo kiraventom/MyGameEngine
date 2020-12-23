@@ -80,7 +80,7 @@ namespace UI
 				Engine.ActionRequest? action = (cki.Key) switch
 				{
 					ConsoleKey.A => engine.Player.IsInFight ? Engine.ActionRequest.Attack : null,
-					ConsoleKey.Tab => engine.Player.Room is LootRoom ? Engine.ActionRequest.Loot : null,
+					ConsoleKey.Tab => engine.Player.Room.HasLoot ? Engine.ActionRequest.Loot : null,
 					ConsoleKey.W => !engine.Player.IsInFight ? Engine.ActionRequest.MoveForward : null,
 					ConsoleKey.S => !engine.Player.IsInFight ? Engine.ActionRequest.MoveBackwards : null,
 					ConsoleKey.E => engine.Player.GetInventory().Any() ? Engine.ActionRequest.Use : null,
@@ -237,28 +237,28 @@ namespace UI
 
 		private static void Player_Moved(object sender, MovedToRoomEventArgs e)
 		{
-			Console.Write($"{e.Player.Name} вошёл в {e.Room.Name}");
-			if (e.Room is EnemyRoom er)
+			Console.Write($"{e.Player.Name} вошёл в комнату");
+			if (e.Room.HasEnemy)
 			{
 				if (e.IsRoomNew)
 				{
-					er.Enemy.Attacked += Actor_Attacked;
-					er.Enemy.Defeated += Actor_Defeated;
-					er.Enemy.HealthChanged += Actor_HealthChanged;
-					er.Enemy.Ability.Used += Usable_Used;
-					if (er.Enemy is Rogue r)
+					e.Room.Enemy.Attacked += Actor_Attacked;
+					e.Room.Enemy.Defeated += Actor_Defeated;
+					e.Room.Enemy.HealthChanged += Actor_HealthChanged;
+					e.Room.Enemy.Ability.Used += Usable_Used;
+					if (e.Room.Enemy is Rogue r)
 					{
 						r.RogueStole += Rogue_RogueStole;
 					}
 				}
-				if (!er.Enemy.IsAlive)
+				if (!e.Room.Enemy.IsAlive)
 					Console.Write(" (очищено)");
 			}
-			if (e.Room is LootRoom lr)
+			if (e.Room.HasLoot)
 			{
 				if (e.IsRoomNew)
-					lr.Looted += Room_Looted;
-				if (lr.Loot is null)
+					e.Room.Looted += Room_Looted;
+				if (e.Room.Loot is null)
 					Console.Write(" (очищено)");
 			}
 
@@ -323,9 +323,8 @@ namespace UI
 			const int healthWidth = 9;
 			const int strenghtWidth = 7;
 			const int levelWidth = 9;
-			const int roomWidth = 30;
 			const int depthWidth = 9;
-			Console.WriteLine($"{"Имя", nameWidth}{"Здоровье", healthWidth}{"Сила", strenghtWidth}{"Уровень",levelWidth}{"Комната", roomWidth}{"Глубина",depthWidth}");
+			Console.WriteLine($"{"Имя", nameWidth}{"Здоровье", healthWidth}{"Сила", strenghtWidth}{"Уровень",levelWidth}{"Глубина",depthWidth}");
 
 			var p = engine.Player;
 			Console.WriteLine(
@@ -333,12 +332,11 @@ namespace UI
 				$"{$"{p.CurrentHealth}/{p.Stats.BaseHealth}", healthWidth}" +
 				$"{$"{p.Stats.MinStrenght}-{p.Stats.MaxStrenght}", strenghtWidth}" +
 				$"{p.Level, levelWidth}" +
-				$"{p.Room.Name, roomWidth}" +
-				$"{p.Room.Depth,depthWidth}");
+				$"{Room.GetDepth(p.Room),depthWidth}");
 
 			if (p.IsInFight)
 			{
-				var e = (p.Room as EnemyRoom).Enemy;
+				var e = p.Room.Enemy;
 				Console.Write(
 					$"{e.Name,nameWidth}" +
 					$"{$"{e.CurrentHealth}/{e.Stats.BaseHealth}",healthWidth}" +
@@ -363,7 +361,7 @@ namespace UI
 			var room = playerRoom;
 			for (int i = 0; i < 3; ++i)
 			{
-				room = room?.NextRoom;
+				room = room?.Next;
 				Console.SetCursorPosition(0, 9 - i);
 				Console.Write(GetRoomChar(room));
 			}
@@ -371,7 +369,7 @@ namespace UI
 			room = playerRoom;
 			for (int i = 0; i < 3; ++i)
 			{
-				room = room.PreviousRoom;
+				room = room.Previous;
 				if (room is null)
 					return;
 
@@ -387,8 +385,8 @@ namespace UI
 
 			return room switch
 			{
-				EnemyRoom er when er.Enemy.IsAlive => 'E',
-				LootRoom lr when lr.Loot is not null => 'L',
+				Room r when r.HasEnemy => 'E',
+				Room r when r.HasLoot => 'L',
 				null => '?',
 				_ => '|'
 			};

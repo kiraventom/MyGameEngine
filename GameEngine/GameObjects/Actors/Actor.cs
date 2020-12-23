@@ -53,7 +53,13 @@ namespace GameEngine.GameObjects.Actors
 		public event EventHandler<InventoryChangedEventArgs> InvChanged;
 
 		// Methods
-		internal static void AcquireRoomToActor(Room room, Actor actor) => actor.Room = room;
+		internal static void AcquireRoomToActor(Room room, Actor actor)
+		{
+			if (room is null)
+				throw new ArgumentNullException(nameof(room));
+
+			actor.Room = room;
+		}
 
 		public IReadOnlyList<Item> GetInventory() => Inventory.ToList();
 

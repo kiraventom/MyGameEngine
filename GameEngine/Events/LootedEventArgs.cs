@@ -5,11 +5,11 @@ namespace GameEngine.Events
 {
 	public class LootedEventArgs : EventArgs
 	{
-		public LootedEventArgs(LootRoom lootRoom)
+		public LootedEventArgs(Room room)
 		{
-			Room = lootRoom;
+			Room = room;
 		}
 
-		public LootRoom Room { get; }
+		public Room Room { get; }
 	}
 }

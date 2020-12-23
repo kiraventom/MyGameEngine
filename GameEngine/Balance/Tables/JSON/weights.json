@@ -4,19 +4,20 @@
     "Troll": 10,
     "Zombie": 70,
     "Demon": 5,
-    "Rogue": 60 
+    "Rogue": 30 
   },
 
   "Items": {
     "Apple": 100,
     "Bread": 80,
-    "Meat": 30,
+    "Meat": 20,
     "HealingPotion": 5
   },
 
-  "Rooms": {
-    "EnemyRoom": 100,
-    "LootRoom": 100,
-    "EmptyRoom": 50
+  "RoomContents": {
+    "None": 100,
+    "HasEnemy": 30,
+    "HasLoot": 5,
+    "HasEnemyAndLoot" : 80
   }
 }

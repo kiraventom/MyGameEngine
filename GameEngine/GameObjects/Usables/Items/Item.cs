@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameEngine.Balance;
+using System;
 using System.Collections.Generic;
 
 namespace GameEngine.GameObjects.Usables.Items
@@ -11,6 +12,5 @@ namespace GameEngine.GameObjects.Usables.Items
 
 	public abstract class Item : Usable
 	{
-		
 	}
 }
