@@ -8,7 +8,10 @@ namespace GameEngine.GameObjects.Rooms
 {
 	public class LootRoom : Room
 	{
-		public LootRoom() => _loot = Balancer.CreateRandomObjects<Item>(0, 3).ToList();
+		public LootRoom()
+		{
+			_loot = Balancer.CreateRandomObjects<Item>(0, 3).ToList();
+		}
 
 		public override string Name => "Комната с сундуком";
 

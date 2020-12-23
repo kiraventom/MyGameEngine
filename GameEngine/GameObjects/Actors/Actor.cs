@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GameEngine.GameObjects.Rooms;
 
 namespace GameEngine.GameObjects.Actors
 {
@@ -43,6 +44,7 @@ namespace GameEngine.GameObjects.Actors
 		public bool IsAlive => CurrentHealth > 0;
 		public uint CurrentHealth { get; private set; }
 		internal ObservableCollection<Item> Inventory { get; }
+		public Room Room { get; private set; }
 
 		// Events
 		public event EventHandler<HealthChangedEventArgs> HealthChanged;
@@ -51,6 +53,8 @@ namespace GameEngine.GameObjects.Actors
 		public event EventHandler<InventoryChangedEventArgs> InvChanged;
 
 		// Methods
+		internal static void AcquireRoomToActor(Room room, Actor actor) => actor.Room = room;
+
 		public IReadOnlyList<Item> GetInventory() => Inventory.ToList();
 
 		internal virtual void Attack(Actor defender) => this.Attack(defender, this.Stats.GetStrenght());

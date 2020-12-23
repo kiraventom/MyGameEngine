@@ -62,6 +62,7 @@ namespace UI
 			DrawControls();
 			DrawInventory();
 			DrawInventorySelector();
+			DrawMap();
 
 			while (true)
 			{
@@ -79,9 +80,10 @@ namespace UI
 				Engine.ActionRequest? action = (cki.Key) switch
 				{
 					ConsoleKey.A => engine.Player.IsInFight ? Engine.ActionRequest.Attack : null,
-					ConsoleKey.L => engine.Player.CurrentRoom is LootRoom ? Engine.ActionRequest.Loot : null,
-					ConsoleKey.M => !engine.Player.IsInFight ? Engine.ActionRequest.Move : null,
-					ConsoleKey.Enter => engine.Player.GetInventory().Any() ? Engine.ActionRequest.Use : null,
+					ConsoleKey.Tab => engine.Player.Room is LootRoom ? Engine.ActionRequest.Loot : null,
+					ConsoleKey.W => !engine.Player.IsInFight ? Engine.ActionRequest.MoveForward : null,
+					ConsoleKey.S => !engine.Player.IsInFight ? Engine.ActionRequest.MoveBackwards : null,
+					ConsoleKey.E => engine.Player.GetInventory().Any() ? Engine.ActionRequest.Use : null,
 					_ => null
 				};
 
@@ -123,7 +125,7 @@ namespace UI
 				else
 				{
 					Console.Clear();
-					Console.SetCursorPosition(0, 5);
+					Console.SetCursorPosition(5, 5);
 					engine.Tick(action.Value);
 
 					if (action.Value == Engine.ActionRequest.Use)
@@ -149,6 +151,7 @@ namespace UI
 				DrawControls();
 				DrawInventory();
 				DrawInventorySelector();
+				DrawMap();
 			}
 		}
 
@@ -178,7 +181,9 @@ namespace UI
 		{
 			Console.ForegroundColor = ConsoleColor.Magenta;
 			Console.WriteLine($"{e.Player.Name} получил новый уровень!");
+			Console.SetCursorPosition(5, Console.CursorTop);
 			Console.WriteLine($"Здоровье восстановлено");
+			Console.SetCursorPosition(5, Console.CursorTop);
 			Console.ForegroundColor = ConsoleColor.White;
 		}
 
@@ -194,17 +199,20 @@ namespace UI
 		private static void Usable_Used(object sender, UsedEventArgs e)
 		{
 			Console.WriteLine($"{e.User.Name} использовал {e.Usable.Name}");
+			Console.SetCursorPosition(5, Console.CursorTop);
 		}
 
 		private static void Actor_Attacked(object sender, AttackedEventArgs e)
 		{
 			Console.WriteLine($"{e.Attacker.Name} атаковал {e.Defender.Name}");
+			Console.SetCursorPosition(5, Console.CursorTop);
 		}
 
 		private static void Actor_Defeated(object sender, DefeatedEventArgs e)
 		{
 			Console.ForegroundColor = ConsoleColor.DarkGray;
 			Console.WriteLine($"{e.Dead.Name} пал в бою с {e.Killer.Name}");
+			Console.SetCursorPosition(5, Console.CursorTop);
 			Console.ForegroundColor = ConsoleColor.White;
 		}
 
@@ -214,12 +222,14 @@ namespace UI
 			{
 				Console.ForegroundColor = ConsoleColor.Green;
 				Console.WriteLine($"{e.Actor.Name} восстановил {e.Change} здоровья благодаря {e.Source.Name}");
+				Console.SetCursorPosition(5, Console.CursorTop);
 			}
 
 			if (e.Change < 0)
 			{
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine($"{e.Actor.Name} получил {- e.Change} урона от {e.Source.Name}");
+				Console.SetCursorPosition(5, Console.CursorTop);
 			}
 
 			Console.ForegroundColor = ConsoleColor.White;
@@ -227,28 +237,40 @@ namespace UI
 
 		private static void Player_Moved(object sender, MovedToRoomEventArgs e)
 		{
-			Console.WriteLine($"{e.Player.Name} вошёл в {e.Room.Name}");
+			Console.Write($"{e.Player.Name} вошёл в {e.Room.Name}");
 			if (e.Room is EnemyRoom er)
 			{
-				er.Enemy.Attacked += Actor_Attacked;
-				er.Enemy.Defeated += Actor_Defeated;
-				er.Enemy.HealthChanged += Actor_HealthChanged;
-				er.Enemy.Ability.Used += Usable_Used;
-				if (er.Enemy is Rogue r)
+				if (e.IsRoomNew)
 				{
-					r.RogueStole += Rogue_RogueStole;
+					er.Enemy.Attacked += Actor_Attacked;
+					er.Enemy.Defeated += Actor_Defeated;
+					er.Enemy.HealthChanged += Actor_HealthChanged;
+					er.Enemy.Ability.Used += Usable_Used;
+					if (er.Enemy is Rogue r)
+					{
+						r.RogueStole += Rogue_RogueStole;
+					}
 				}
+				if (!er.Enemy.IsAlive)
+					Console.Write(" (очищено)");
 			}
 			if (e.Room is LootRoom lr)
 			{
-				lr.Looted += Room_Looted;
+				if (e.IsRoomNew)
+					lr.Looted += Room_Looted;
+				if (lr.Loot is null)
+					Console.Write(" (очищено)");
 			}
+
+			Console.WriteLine();
+			Console.SetCursorPosition(5, Console.CursorTop);
 		}
 
 		private static void Rogue_RogueStole(object sender, RogueStoleEventArgs e)
 		{
 			Console.ForegroundColor = ConsoleColor.Cyan;
 			Console.WriteLine($"{e.Stealer.Name} украл у {e.StolenFrom.Name} {e.Stolen.Name}!");
+			Console.SetCursorPosition(5, Console.CursorTop);
 			Console.ForegroundColor = ConsoleColor.White;
 		}
 
@@ -258,6 +280,7 @@ namespace UI
 			if (e.Room.Loot.Any())
 			{
 				Console.WriteLine($"После тщательных поисков вы обнаруживаете:");
+				Console.SetCursorPosition(5, Console.CursorTop);
 				foreach (var item in e.Room.Loot)
 				{
 					Console.Write($"\t- {item.Name} -- ");
@@ -269,6 +292,7 @@ namespace UI
 						else
 							Console.Write($"{h.MinPower}-{h.MaxPower}");
 						Console.WriteLine(" здоровья.");
+						Console.SetCursorPosition(5, Console.CursorTop);
 					}
 					
 					if (item is IDamaging d)
@@ -279,12 +303,14 @@ namespace UI
 						else
 							Console.Write($"{d.MinPower}-{d.MaxPower}");
 						Console.WriteLine(" урона.");
+						Console.SetCursorPosition(5, Console.CursorTop);
 					}
 				}
 			}
 			else
 			{
 				Console.WriteLine($"Поиски ни к чему не привели.");
+				Console.SetCursorPosition(5, Console.CursorTop);
 			}
 			
 			Console.ForegroundColor = ConsoleColor.White;
@@ -298,7 +324,8 @@ namespace UI
 			const int strenghtWidth = 7;
 			const int levelWidth = 9;
 			const int roomWidth = 30;
-			Console.WriteLine($"{"Имя", nameWidth}{"Здоровье", healthWidth}{"Сила", strenghtWidth}{"Уровень",levelWidth}{"Комната", roomWidth}");
+			const int depthWidth = 9;
+			Console.WriteLine($"{"Имя", nameWidth}{"Здоровье", healthWidth}{"Сила", strenghtWidth}{"Уровень",levelWidth}{"Комната", roomWidth}{"Глубина",depthWidth}");
 
 			var p = engine.Player;
 			Console.WriteLine(
@@ -306,24 +333,65 @@ namespace UI
 				$"{$"{p.CurrentHealth}/{p.Stats.BaseHealth}", healthWidth}" +
 				$"{$"{p.Stats.MinStrenght}-{p.Stats.MaxStrenght}", strenghtWidth}" +
 				$"{p.Level, levelWidth}" +
-				$"{p.CurrentRoom.Name, roomWidth}");
+				$"{p.Room.Name, roomWidth}" +
+				$"{p.Room.Depth,depthWidth}");
 
 			if (p.IsInFight)
 			{
-				var e = (p.CurrentRoom as EnemyRoom).Enemy;
+				var e = (p.Room as EnemyRoom).Enemy;
 				Console.Write(
 					$"{e.Name,nameWidth}" +
 					$"{$"{e.CurrentHealth}/{e.Stats.BaseHealth}",healthWidth}" +
-					$"{$"{e.Stats.MinStrenght}-{e.Stats.MaxStrenght}",strenghtWidth}");
+					$"{$"{e.Stats.MinStrenght}-{e.Stats.MaxStrenght}",strenghtWidth}" +
+					$"{e.Level,levelWidth}");
 			}
-			
 		}
 		
 		static void DrawControls()
 		{
-			const string inventoryControls = "A - атака, L - лутаться, M - движение, стрелки - выбрать предмет, Enter - использовать предмет";
-			Console.SetCursorPosition(0, Console.WindowTop + Console.WindowHeight - 1);
+			const string inventoryControls = "W/S - движение, A - атака, Tab - собрать лут, стрелки - выбрать предмет, E - использовать";
+			Console.SetCursorPosition(3, Console.WindowTop + Console.WindowHeight - 1);
 			Console.Write(inventoryControls);
+		}
+
+		static void DrawMap()
+		{
+			var playerRoom = engine.Player.Room;
+			Console.SetCursorPosition(0, 10);
+			Console.Write(GetRoomChar(playerRoom));
+
+			var room = playerRoom;
+			for (int i = 0; i < 3; ++i)
+			{
+				room = room?.NextRoom;
+				Console.SetCursorPosition(0, 9 - i);
+				Console.Write(GetRoomChar(room));
+			}
+
+			room = playerRoom;
+			for (int i = 0; i < 3; ++i)
+			{
+				room = room.PreviousRoom;
+				if (room is null)
+					return;
+
+				Console.SetCursorPosition(0, 11 + i);
+				Console.Write(GetRoomChar(room));
+			}
+		}
+
+		static char GetRoomChar(Room room)
+		{
+			if (engine.Player.Room == room)
+				return 'P';
+
+			return room switch
+			{
+				EnemyRoom er when er.Enemy.IsAlive => 'E',
+				LootRoom lr when lr.Loot is not null => 'L',
+				null => '?',
+				_ => '|'
+			};
 		}
 
 		static void DrawInventory()

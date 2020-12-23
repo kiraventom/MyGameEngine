@@ -10,8 +10,8 @@ namespace GameEngine.GameObjects.Actors
 	{
 		public Player()
 		{
-			CurrentRoom = new EmptyRoom();
 			this.ReachedNewLevel += (_, e) => this.GainHealth(e.NewLevel * 10, this);
+			AcquireRoomToActor(new EmptyRoom(), this);
 		}
 
 		//Overrides
@@ -20,8 +20,7 @@ namespace GameEngine.GameObjects.Actors
 		public override uint Level => XP / 10;
 
 		// Properties
-		public bool IsInFight => CurrentRoom is EnemyRoom enemyRoom && enemyRoom.Enemy.IsAlive;
-		public Room CurrentRoom { get; private set; }
+		public bool IsInFight => Room is EnemyRoom enemyRoom && enemyRoom.Enemy.IsAlive;
 		private uint XP { get; set; }
 
 		// Events
@@ -33,23 +32,42 @@ namespace GameEngine.GameObjects.Actors
 		{
 			if (!this.IsInFight)
 			{
-				var room = Balancer.CreateRandomObject<Room>();
-				Moved.Invoke(this, new Events.MovedToRoomEventArgs(this, room));
-				this.CurrentRoom = room;
-				if (CurrentRoom is EnemyRoom er)
-					er.Enemy.Defeated += (_, _) =>
-					{
-						var levelBefore = Level;
-						this.XP += er.Enemy.Level;
-						if (levelBefore != this.Level)
-							ReachedNewLevel.Invoke(this, new Events.NewLevelEventArgs(this, levelBefore));
-					};
+				Room nextRoom;
+				bool isNextRoomNew = this.Room.NextRoom is null;
+				nextRoom = isNextRoomNew ? CreateNewRoom() : this.Room.NextRoom;
+				AcquireRoomToActor(nextRoom, this);
+				Moved.Invoke(this, new Events.MovedToRoomEventArgs(this, this.Room, isNextRoomNew));
 			}
 		}
 
-		internal void Loot()
+		internal void MoveToPrevRoom()
 		{
-			if (CurrentRoom is LootRoom lootRoom && lootRoom.Loot is not null)
+			if (!this.IsInFight && this.Room.PreviousRoom is not null)
+			{
+				AcquireRoomToActor(this.Room.PreviousRoom, this);
+				Moved.Invoke(this, new Events.MovedToRoomEventArgs(this, this.Room, false));
+			}
+		}
+
+		private Room CreateNewRoom()
+		{
+			var newRoom = Balancer.CreateRandomObject<Room>();
+			Room.LinkRooms(this.Room, newRoom);
+			if (newRoom is EnemyRoom er)
+				er.Enemy.Defeated += (_, _) =>
+				{
+					var levelBefore = Level;
+					this.XP += er.Enemy.Level;
+					if (levelBefore != this.Level)
+						ReachedNewLevel.Invoke(this, new Events.NewLevelEventArgs(this, levelBefore));
+				};
+
+			return newRoom;
+		}
+
+		internal void GatherLoot()
+		{
+			if (Room is LootRoom lootRoom && lootRoom.Loot is not null)
 			{
 				var loot = lootRoom.TakeLoot();
 				foreach (var item in loot)

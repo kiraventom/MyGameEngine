@@ -10,7 +10,7 @@ namespace GameEngine
 	{
 		public Engine() { }
 
-		public enum ActionRequest { Move, Attack, Loot, Use }
+		public enum ActionRequest { MoveForward, MoveBackwards, Attack, Loot, Use }
 
 		public Player Player { get; } = new Player();
 		public bool IsGameRunning => Player.IsAlive;
@@ -35,11 +35,15 @@ namespace GameEngine
 					break;
 
 				case ActionRequest.Loot:
-					Player.Loot();
+					Player.GatherLoot();
 					break;
 
-				case ActionRequest.Move:
+				case ActionRequest.MoveForward:
 					Player.MoveToNextRoom();
+					break;
+
+				case ActionRequest.MoveBackwards:
+					Player.MoveToPrevRoom();
 					break;
 
 				case ActionRequest.Use:
@@ -56,7 +60,7 @@ namespace GameEngine
 		{
 			if (Player.IsInFight)
 			{
-				var enemy = (Player.CurrentRoom as EnemyRoom).Enemy;
+				var enemy = (Player.Room as EnemyRoom).Enemy;
 				Player.Attack(enemy);
 				if (enemy.IsAlive)
 					enemy.Attack(Player);

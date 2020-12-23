@@ -6,13 +6,15 @@ namespace GameEngine.Events
 {
 	public class MovedToRoomEventArgs : EventArgs
 	{
-		public MovedToRoomEventArgs(Player player, Room room)
+		public MovedToRoomEventArgs(Player player, Room room, bool isNew)
 		{
 			Player = player;
 			Room = room;
+			IsRoomNew = isNew;
 		}
 
 		public Player Player { get; }
 		public Room Room { get; }
+		public bool IsRoomNew { get; } // был ли игрок в комнате раньше
 	}
 }
