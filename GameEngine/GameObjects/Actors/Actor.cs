@@ -5,7 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using GameEngine.GameObjects.Rooms;
+using GameEngine.Rooms;
+using System.Threading.Tasks;
 
 namespace GameEngine.GameObjects.Actors
 {
@@ -22,7 +23,6 @@ namespace GameEngine.GameObjects.Actors
 				{
 					NotifyCollectionChangedAction.Add => new InventoryChangedEventArgs(ea.NewItems[0] as Item, ea.Action, this),
 					NotifyCollectionChangedAction.Remove => new InventoryChangedEventArgs(ea.OldItems[0] as Item, ea.Action, this),
-
 					_ => throw new NotImplementedException()
 				};
 
@@ -61,7 +61,7 @@ namespace GameEngine.GameObjects.Actors
 			actor.Room = room;
 		}
 
-		public IReadOnlyList<Item> GetInventory() => Inventory.ToList();
+		public IReadOnlyList<Item> GetInventory() => new List<Item>(Inventory);
 
 		internal virtual void Attack(Actor defender) => this.Attack(defender, this.Stats.GetStrenght());
 
@@ -71,7 +71,7 @@ namespace GameEngine.GameObjects.Actors
 				throw new ArgumentNullException(nameof(defender));
 
 			var ea = new AttackedEventArgs(this, defender, strenght);
-			Attacked.Invoke(this, ea);
+			Attacked?.Invoke(this, ea);
 			defender.ReceiveDamage(strenght, this);
 		}
 

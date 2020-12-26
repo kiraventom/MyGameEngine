@@ -5,13 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameEngine.GameObjects.Rooms
+namespace GameEngine.Rooms
 {
 	public class Room
 	{
 		private Room(Enemy enemy = null, IEnumerable<Item> loot = null)
 		{
 			Enemy = enemy;
+			if (Enemy is not null)
+			{
+				Enemy.LootDropped += this.Enemy_LootDropped;
+			}
+
 			_loot = new List<Item>(loot ?? Enumerable.Empty<Item>());
 		}
 
@@ -69,6 +74,12 @@ namespace GameEngine.GameObjects.Rooms
 			var loot = new List<Item>(_loot);
 			_loot = null;
 			return loot.AsReadOnly();
+		}
+
+		private void Enemy_LootDropped(object sender, Events.LootDroppedEventArgs e)
+		{
+			foreach (var item in e.Loot)
+				this._loot.Add(item);
 		}
 	}
 }
