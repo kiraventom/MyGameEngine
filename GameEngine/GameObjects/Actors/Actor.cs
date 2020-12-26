@@ -19,6 +19,7 @@ namespace GameEngine.GameObjects.Actors
 			Inventory.CollectionChanged += (s, ea) =>
 			{
 				InventoryChangedEventArgs icea;
+				var a = ea.OldItems;
 				icea = ea.Action switch
 				{
 					NotifyCollectionChangedAction.Add => new InventoryChangedEventArgs(ea.NewItems[0] as Item, ea.Action, this),
