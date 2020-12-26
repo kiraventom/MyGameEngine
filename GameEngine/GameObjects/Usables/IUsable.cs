@@ -8,6 +8,7 @@ namespace GameEngine.GameObjects.Usables
 		public uint MinPower { get; }
 		public uint MaxPower { get; }
 		internal virtual Action<Actor, IGameObject, uint> BasicEffect => null;
+		internal virtual string UsableDescription => null;
 		internal void Use(Actor user, IGameObject usedAt);
 	}
 }
