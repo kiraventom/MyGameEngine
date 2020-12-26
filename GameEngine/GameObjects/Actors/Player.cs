@@ -1,5 +1,5 @@
 ﻿using GameEngine.Balance;
-using GameEngine.GameObjects.Rooms;
+using GameEngine.Rooms;
 using GameEngine.GameObjects.Usables.Items;
 using System;
 using System.Collections.Generic;
@@ -69,7 +69,7 @@ namespace GameEngine.GameObjects.Actors
 
 		internal void GatherLoot()
 		{
-			if (Room is not null && Room.Loot.Count > 0)
+			if (!this.IsInFight && Room is not null && Room.Loot.Count > 0)
 			{
 				var loot = Room.TakeLoot();
 				foreach (var item in loot)

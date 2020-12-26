@@ -1,7 +1,7 @@
 ﻿using GameEngine.Balance.Tables;
 using GameEngine.GameObjects;
 using GameEngine.GameObjects.Actors.Enemies;
-using GameEngine.GameObjects.Rooms;
+using GameEngine.Rooms;
 using GameEngine.GameObjects.Usables.Items;
 using System;
 using System.Collections.Generic;

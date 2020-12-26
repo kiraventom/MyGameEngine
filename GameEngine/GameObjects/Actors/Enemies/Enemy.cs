@@ -1,5 +1,7 @@
 ﻿using GameEngine.Balance;
+using GameEngine.Events;
 using GameEngine.GameObjects.Usables.Abilities;
+using System;
 using System.Collections.Generic;
 
 namespace GameEngine.GameObjects.Actors.Enemies
@@ -9,8 +11,21 @@ namespace GameEngine.GameObjects.Actors.Enemies
 		protected Enemy() : base()
 		{
 			Ability = new EmptyAbility();
+			this.Defeated += this.Enemy_Defeated;
+		}
+
+		private void Enemy_Defeated(object sender, DefeatedEventArgs e)
+		{
+			LootDropped.Invoke(this, new LootDroppedEventArgs(this, this.GetInventory()));
+			var allItems = this.GetInventory();
+			foreach (var item in allItems)
+			{
+				this.Inventory.Remove(item);
+			}
 		}
 
 		public virtual Ability Ability { get; }
+
+		public event EventHandler<LootDroppedEventArgs> LootDropped;
 	}
 }
