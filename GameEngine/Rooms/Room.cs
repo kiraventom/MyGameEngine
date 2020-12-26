@@ -1,4 +1,5 @@
 ﻿using GameEngine.Balance.Tables;
+using GameEngine.GameObjects.Actors;
 using GameEngine.GameObjects.Actors.Enemies;
 using GameEngine.GameObjects.Usables.Items;
 using System;
@@ -15,6 +16,7 @@ namespace GameEngine.Rooms
 			if (Enemy is not null)
 			{
 				Enemy.LootDropped += this.Enemy_LootDropped;
+				Actor.AcquireRoomToActor(this, Enemy);
 			}
 
 			_loot = new List<Item>(loot ?? Enumerable.Empty<Item>());
