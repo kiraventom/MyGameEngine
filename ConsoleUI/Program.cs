@@ -1,15 +1,12 @@
 ﻿using GameEngine;
 using GameEngine.Events;
 using GameEngine.GameObjects.Actors.Enemies;
-using GameEngine.GameObjects.Rooms;
+using GameEngine.Rooms;
 using GameEngine.GameObjects.Usables;
 using GameEngine.GameObjects.Usables.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-// @TODO: Выпадение лута с монстра!! Особенно вора
-// @TODO: Оружие
 
 namespace UI
 {
@@ -80,7 +77,7 @@ namespace UI
 				Engine.ActionRequest? action = (cki.Key) switch
 				{
 					ConsoleKey.A => engine.Player.IsInFight ? Engine.ActionRequest.Attack : null,
-					ConsoleKey.Tab => engine.Player.Room.HasLoot ? Engine.ActionRequest.Loot : null,
+					ConsoleKey.Tab => !engine.Player.IsInFight && engine.Player.Room.HasLoot ? Engine.ActionRequest.Loot : null,
 					ConsoleKey.W => !engine.Player.IsInFight ? Engine.ActionRequest.MoveForward : null,
 					ConsoleKey.S => !engine.Player.IsInFight ? Engine.ActionRequest.MoveBackwards : null,
 					ConsoleKey.E => engine.Player.GetInventory().Any() ? Engine.ActionRequest.Use : null,
@@ -240,30 +237,49 @@ namespace UI
 			Console.Write($"{e.Player.Name} вошёл в комнату");
 			if (e.Room.HasEnemy)
 			{
+				Console.Write($". Противник: ");
 				if (e.IsRoomNew)
 				{
 					e.Room.Enemy.Attacked += Actor_Attacked;
 					e.Room.Enemy.Defeated += Actor_Defeated;
 					e.Room.Enemy.HealthChanged += Actor_HealthChanged;
 					e.Room.Enemy.Ability.Used += Usable_Used;
+					e.Room.Enemy.LootDropped += Enemy_LootDropped;
 					if (e.Room.Enemy is Rogue r)
 					{
 						r.RogueStole += Rogue_RogueStole;
 					}
 				}
-				if (!e.Room.Enemy.IsAlive)
-					Console.Write(" (очищено)");
+				if (e.Room.Enemy.IsAlive)
+					Console.Write(e.Room.Enemy.Name);
+				else
+					Console.Write("<мёртв>");
 			}
 			if (e.Room.HasLoot)
 			{
-				if (e.IsRoomNew)
-					e.Room.Looted += Room_Looted;
+				Console.Write(". Лут ");
+				
 				if (e.Room.Loot is null)
-					Console.Write(" (очищено)");
+					Console.Write("<собран>");
 			}
+
+			if (e.IsRoomNew)
+				e.Room.Looted += Room_Looted;
+				
 
 			Console.WriteLine();
 			Console.SetCursorPosition(5, Console.CursorTop);
+		}
+
+		private static void Enemy_LootDropped(object sender, LootDroppedEventArgs e)
+		{
+			if (!e.Loot.Any())
+				return;
+
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine($"Из {e.Dropper.Name} выпало {e.Loot.Count()} предметов!");
+			Console.SetCursorPosition(5, Console.CursorTop);
+			Console.ForegroundColor = ConsoleColor.White;
 		}
 
 		private static void Rogue_RogueStole(object sender, RogueStoleEventArgs e)

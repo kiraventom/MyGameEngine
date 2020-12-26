@@ -1,5 +1,5 @@
 ﻿using GameEngine.GameObjects.Actors;
-using GameEngine.GameObjects.Rooms;
+using GameEngine.Rooms;
 using GameEngine.GameObjects.Usables.Items;
 using GameEngine.GameObjects.Usables.Items.Consumables;
 using System.Linq;

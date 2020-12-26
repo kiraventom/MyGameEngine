@@ -1,5 +1,5 @@
 ﻿using GameEngine.GameObjects.Actors;
-using GameEngine.GameObjects.Rooms;
+using GameEngine.Rooms;
 using System;
 
 namespace GameEngine.Events
