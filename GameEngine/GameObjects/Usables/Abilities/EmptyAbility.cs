@@ -8,6 +8,7 @@ namespace GameEngine.GameObjects.Usables.Abilities
 		internal EmptyAbility() { }
 
 		public override string Name => "Нет способности";
+		public override string Description => "Нет описания";
 
 		public override uint MinPower => 0;
 		public override uint MaxPower => 0;

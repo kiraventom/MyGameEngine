@@ -34,6 +34,7 @@ namespace GameEngine.GameObjects.Actors
 
 		// IGameObject
 		public abstract string Name { get; }
+		public abstract string Description { get; }
 
 		// Overridable
 		public virtual uint Level => Stats.Level;

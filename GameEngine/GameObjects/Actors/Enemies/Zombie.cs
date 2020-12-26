@@ -11,6 +11,7 @@ namespace GameEngine.GameObjects.Actors.Enemies
 		}
 
 		public override string Name => "Зомби";
+		public override string Description => "С каждой атакой отравляет тебя трупным ядом. Берегись!";
 		public override Ability Ability { get; }
 
 		internal override void Attack(Actor defender) 

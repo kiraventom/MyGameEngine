@@ -47,6 +47,8 @@ namespace FormsUI
 			}
 
 			InventoryLB.DataSource = this.DisplayableInventory;
+			InventoryLB.SelectedIndexChanged += this.InventoryLB_SelectedIndexChanged;
+			InventoryLB.MouseDoubleClick += this.InventoryLB_MouseDoubleClick;
 			EnemyCanvas.Click += AttackBt_Click;
 			RoomCanvas.Click += MoveForwardBt_Click;
 		}
@@ -73,10 +75,21 @@ namespace FormsUI
 			Tick(GameEngine.Engine.ActionRequest.Attack);
 		}
 
-		private void Tick(GameEngine.Engine.ActionRequest action)
+		private void InventoryLB_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			Engine.Tick(action);
-			DrawPlayerInfo();
+			if (InventoryLB.SelectedItem is not null)
+			{
+				Engine.SelectedItem = (InventoryLB.SelectedItem as DisplayableItem).Item;
+				Tick(GameEngine.Engine.ActionRequest.Use);
+			}
+		}
+
+		private void InventoryLB_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (InventoryLB.SelectedIndex >= 0)
+			{
+				this.DescriptionRTB.Text = (InventoryLB.SelectedItem as DisplayableItem).Item.Description;
+			}
 		}
 
 		////////////////////////////////////////////////////////
@@ -97,7 +110,7 @@ namespace FormsUI
 		private void Player_InvChanged(object sender, GameEngine.Events.InventoryChangedEventArgs e)
 		{
 			var newDisplayable = new DisplayableItem(e.Item, 1);
-			var displayable = DisplayableInventory.FirstOrDefault(di => di.GetType() == newDisplayable.Item.GetType());
+			var displayable = DisplayableInventory.FirstOrDefault(di => di.Item.GetType() == newDisplayable.Item.GetType());
 			switch (e.ChangeType)
 			{
 				case GameEngine.Events.InventoryChangedEventArgs.Type.Add:
@@ -188,6 +201,12 @@ namespace FormsUI
 		}
 
 		////////////////////////////////////////////////////////
+
+		private void Tick(GameEngine.Engine.ActionRequest action)
+		{
+			Engine.Tick(action);
+			DrawPlayerInfo();
+		}
 
 		private void SubscribeToPlayer(Player p)
 		{

@@ -11,6 +11,7 @@ namespace GameEngine.GameObjects.Actors.Enemies
 		}
 
 		public override string Name => "Тролль";
+		public override string Description => "Тупой, зелёный, вонючий, зато его раны заживают на глазах.";
 		public override Ability Ability { get; }
 
 		internal override void ReceiveDamage(uint amount, IGameObject source)

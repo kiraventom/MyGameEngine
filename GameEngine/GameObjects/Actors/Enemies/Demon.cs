@@ -12,6 +12,7 @@ namespace GameEngine.GameObjects.Actors.Enemies
 
 		// Overrides
 		public override string Name => "Демон";
+		public override string Description => "Монстр из самых недр ада, высасывающий жизнь каждой атакой. Погоди, вроде же вампиры должны так делать?";
 		public override Ability Ability => DemonAbility;
 
 		// Properties
