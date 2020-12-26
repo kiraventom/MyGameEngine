@@ -1,6 +1,6 @@
 {
   "Enemies": {
-    "Skeleton": 100,
+    "Skeleton": 9999999,
     "Troll": 10,
     "Zombie": 70,
     "Demon": 5,

@@ -28,7 +28,7 @@ namespace GameEngine.GameObjects.Actors.Enemies
 		internal override void Attack(Actor defender)
 		{
 			base.Attack(defender);
-			if (Balancer.Rnd.NextDouble() < 0.35)
+			if (Balancer.Rnd.NextDouble() < 1/*0.35*/)
 			{
 				this.RogueAbility.Use(this, defender);
 				RogueStole.Invoke(this, new RogueStoleEventArgs(this, defender, RogueAbility.Stolen));
