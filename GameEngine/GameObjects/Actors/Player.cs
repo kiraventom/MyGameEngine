@@ -16,6 +16,7 @@ namespace GameEngine.GameObjects.Actors
 
 		//Overrides
 		public override string Name => "Игрок";
+		public override string Description => "Игрок";
 		protected override IEnumerable<Item> StartingInventory => Balancer.CreateRandomItems(0, 2);
 		public override uint Level => XP / 10;
 

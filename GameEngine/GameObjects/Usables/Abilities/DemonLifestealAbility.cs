@@ -6,7 +6,8 @@ namespace GameEngine.GameObjects.Usables.Abilities
 	{
 		public DemonLifestealAbility() { }
 
-		public override string Name => "Демоническое вытягивание жизни";
+		public override string Name => "Вытягивание жизни";
+		public override string Description => "Нечеловеческая способность подпитывать свою мощь, истощая противника";
 		public override uint MinPower => AmountToSteal;
 		public override uint MaxPower => AmountToSteal;
 

@@ -16,6 +16,7 @@ namespace GameEngine.GameObjects.Actors.Enemies
 
 		// Overrides
 		public override string Name => "Вор";
+		public override string Description => "Следи за карманами, этот парень с каждой атакой имеет шанс свистнуть у тебя что-нибудь.";
 		public override Ability Ability => RogueAbility;
 
 		// Properties

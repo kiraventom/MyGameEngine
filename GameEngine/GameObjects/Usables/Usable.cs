@@ -9,6 +9,7 @@ namespace GameEngine.GameObjects.Usables
 		protected Usable() { }
 
 		public abstract string Name { get; }
+		public abstract string Description { get; }
 		public abstract uint MinPower { get; }
 		public abstract uint MaxPower { get; }
 		internal virtual Action<Actor, IGameObject, uint> Effect => null;
@@ -24,6 +25,8 @@ namespace GameEngine.GameObjects.Usables
 
 		uint IUsable.MinPower => this.MinPower;
 		uint IUsable.MaxPower => this.MaxPower;
+		string IGameObject.Description => Description;
+
 		void IUsable.Use(Actor user, IGameObject usedAt) => this.Use(user, usedAt);
 
 		public event EventHandler<UsedEventArgs> Used;
