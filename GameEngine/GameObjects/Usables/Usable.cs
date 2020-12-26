@@ -12,21 +12,11 @@ namespace GameEngine.GameObjects.Usables
 		public abstract string Description { get; }
 		public abstract uint MinPower { get; }
 		public abstract uint MaxPower { get; }
-		internal virtual Action<Actor, IGameObject, uint> Effect => null;
-
-		private Action<Actor, IGameObject, uint> _basicEffect => (user, usedAt, power) => //redesign
-		{
-			if (this is IHealing)
-				(usedAt as Actor)?.GainHealth(power, this);
-			else
-			if (this is IDamaging)
-				(usedAt as Actor)?.ReceiveDamage(power, this);
-		};
+		protected virtual Action<Actor, IGameObject, uint> Effect => null;
 
 		uint IUsable.MinPower => this.MinPower;
 		uint IUsable.MaxPower => this.MaxPower;
 		string IGameObject.Description => Description;
-
 		void IUsable.Use(Actor user, IGameObject usedAt) => this.Use(user, usedAt);
 
 		public event EventHandler<UsedEventArgs> Used;
@@ -34,8 +24,9 @@ namespace GameEngine.GameObjects.Usables
 		internal virtual void Use(Actor user, IGameObject usedAt)
 		{
 			this.Used.Invoke(this, new UsedEventArgs(user, usedAt, this));
-			this._basicEffect.Invoke(user, usedAt, this.GetPower());
-			this.Effect?.Invoke(user, usedAt, this.GetPower());
+			var power = this.GetPower();
+			(this as IUsable)?.BasicEffect?.Invoke(user, usedAt, power);
+			this.Effect?.Invoke(user, usedAt, power);
 		}
 
 		public uint GetPower() => (uint)Balance.Balancer.Rnd.Next((int)MinPower, (int)MaxPower);

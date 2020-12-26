@@ -1,7 +1,4 @@
-﻿using GameEngine.Balance;
-using GameEngine.GameObjects.Usables.Abilities;
-
-namespace GameEngine.GameObjects.Actors.Enemies
+﻿namespace GameEngine.GameObjects.Actors.Enemies
 {
 	public class Skeleton : Enemy
 	{

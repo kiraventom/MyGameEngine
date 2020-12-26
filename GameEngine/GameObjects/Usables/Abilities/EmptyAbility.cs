@@ -1,7 +1,4 @@
-﻿using GameEngine.GameObjects.Actors;
-using System;
-
-namespace GameEngine.GameObjects.Usables.Abilities
+﻿namespace GameEngine.GameObjects.Usables.Abilities
 {
 	public class EmptyAbility : Ability
 	{

@@ -1,5 +1,4 @@
-﻿using GameEngine.Balance;
-using GameEngine.GameObjects.Usables.Abilities;
+﻿using GameEngine.GameObjects.Usables.Abilities;
 
 namespace GameEngine.GameObjects.Actors.Enemies
 {

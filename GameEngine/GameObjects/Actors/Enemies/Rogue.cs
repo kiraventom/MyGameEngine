@@ -2,10 +2,8 @@
 using GameEngine.Events;
 using GameEngine.GameObjects.Usables;
 using GameEngine.GameObjects.Usables.Abilities;
-using GameEngine.GameObjects.Usables.Items;
 using GameEngine.GameObjects.Usables.Items.Consumables;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace GameEngine.GameObjects.Actors.Enemies

@@ -1,8 +1,6 @@
-﻿using GameEngine.Balance;
-using GameEngine.Events;
+﻿using GameEngine.Events;
 using GameEngine.GameObjects.Usables.Abilities;
 using System;
-using System.Collections.Generic;
 
 namespace GameEngine.GameObjects.Actors.Enemies
 {

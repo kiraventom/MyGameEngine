@@ -1,16 +1,15 @@
-﻿using GameEngine.GameObjects.Usables.Items;
-using GameEngine.Events;
-using System.Collections.Specialized;
+﻿using GameEngine.Events;
+using GameEngine.GameObjects.Usables.Items;
+using GameEngine.Rooms;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
-using GameEngine.Rooms;
-using System.Threading.Tasks;
 
 namespace GameEngine.GameObjects.Actors
 {
-	public abstract class Actor : IGameObject 
+	public abstract class Actor : IGameObject
 	{
 		protected Actor() : base()
 		{

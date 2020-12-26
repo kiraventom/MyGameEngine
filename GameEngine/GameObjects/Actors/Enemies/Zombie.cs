@@ -1,5 +1,4 @@
-﻿using GameEngine.Balance;
-using GameEngine.GameObjects.Usables.Abilities;
+﻿using GameEngine.GameObjects.Usables.Abilities;
 
 namespace GameEngine.GameObjects.Actors.Enemies
 {
@@ -14,7 +13,7 @@ namespace GameEngine.GameObjects.Actors.Enemies
 		public override string Description => "С каждой атакой отравляет тебя трупным ядом. Берегись!";
 		public override Ability Ability { get; }
 
-		internal override void Attack(Actor defender) 
+		internal override void Attack(Actor defender)
 		{
 			base.Attack(defender);
 			Poison(defender);
