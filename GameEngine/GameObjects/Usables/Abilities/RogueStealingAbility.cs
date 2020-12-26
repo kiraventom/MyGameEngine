@@ -15,9 +15,9 @@ namespace GameEngine.GameObjects.Usables.Abilities
 
 		public Item Stolen { get; private set; }
 
-		internal override Action<Actor, IGameObject, uint> Effect => (user, usedAt, _) =>
+		protected override Action<Actor, IGameObject, uint> Effect => (user, usedAt, _) =>
 		{
-			if (usedAt is Player stolenFrom && user is Rogue stealer) 
+			if (usedAt is Player stolenFrom && user is Rogue stealer)
 			{
 				var enemyInv = stolenFrom.GetInventory();
 				if (enemyInv.Count == 0)
