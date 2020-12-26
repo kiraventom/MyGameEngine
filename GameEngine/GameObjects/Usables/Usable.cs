@@ -9,15 +9,14 @@ namespace GameEngine.GameObjects.Usables
 		protected Usable() { }
 
 		public abstract string Name { get; }
-		public abstract string Description { get; }
+		protected abstract string Description { get; }
 		public abstract uint MinPower { get; }
 		public abstract uint MaxPower { get; }
 		protected virtual Action<Actor, IGameObject, uint> Effect => null;
 
 		uint IUsable.MinPower => this.MinPower;
 		uint IUsable.MaxPower => this.MaxPower;
-		string IGameObject.Description => Description;
-
+		string IGameObject.Description => GetDescription();
 		void IUsable.Use(Actor user, IGameObject usedAt) => this.Use(user, usedAt);
 
 		public event EventHandler<UsedEventArgs> Used;
@@ -31,5 +30,6 @@ namespace GameEngine.GameObjects.Usables
 		}
 
 		public uint GetPower() => (uint)Balance.Balancer.Rnd.Next((int)MinPower, (int)MaxPower);
+		public string GetDescription() => this.Description + ' ' + '[' + (this as IUsable).UsableDescription + ']';
 	}
 }

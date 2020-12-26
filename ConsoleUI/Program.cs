@@ -299,28 +299,11 @@ namespace UI
 				Console.SetCursorPosition(5, Console.CursorTop);
 				foreach (var item in e.Room.Loot)
 				{
-					Console.Write($"\t- {item.Name} -- ");
-					if (item is IHealing h)
-					{
-						Console.Write("Восстанавливает ");
-						if (h.MinPower == h.MaxPower)
-							Console.Write(h.MinPower);
-						else
-							Console.Write($"{h.MinPower}-{h.MaxPower}");
-						Console.WriteLine(" здоровья.");
-						Console.SetCursorPosition(5, Console.CursorTop);
-					}
-					
-					if (item is IDamaging d)
-					{
-						Console.Write("Наносит ");
-						if (d.MinPower == d.MaxPower)
-							Console.Write(d.MinPower);
-						else
-							Console.Write($"{d.MinPower}-{d.MaxPower}");
-						Console.WriteLine(" урона.");
-						Console.SetCursorPosition(5, Console.CursorTop);
-					}
+					Console.WriteLine($"\t- {item.Name}:");
+					Console.SetCursorPosition(5, Console.CursorTop);
+					Console.WriteLine($"\t {item.GetDescription()}");
+					Console.SetCursorPosition(5, Console.CursorTop);
+
 				}
 			}
 			else

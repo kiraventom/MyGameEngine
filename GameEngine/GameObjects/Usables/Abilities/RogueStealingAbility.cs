@@ -8,7 +8,7 @@ namespace GameEngine.GameObjects.Usables.Abilities
 	public class RogueStealingAbility : Ability
 	{
 		public override string Name => "Ловкость воришки";
-		public override string Description => "Проворный проныра проникает в пожитки и присваивает полезности";
+		protected override string Description => "Проворный проныра проникает в пожитки и присваивает полезности";
 
 		public override uint MinPower => 0;
 		public override uint MaxPower => 0;
