@@ -303,7 +303,6 @@ namespace UI
 					Console.SetCursorPosition(5, Console.CursorTop);
 					Console.WriteLine($"\t {item.GetDescription()}");
 					Console.SetCursorPosition(5, Console.CursorTop);
-
 				}
 			}
 			else

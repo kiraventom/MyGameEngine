@@ -6,10 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using GameEngine.GameObjects.Usables.Items;
 
 namespace FormsUI
 {
@@ -75,20 +72,20 @@ namespace FormsUI
 			Tick(GameEngine.Engine.ActionRequest.Attack);
 		}
 
+		private void InventoryLB_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (InventoryLB.SelectedIndex >= 0)
+			{
+				this.DescriptionRTB.Text = (InventoryLB.SelectedItem as DisplayableItem).Item.GetDescription();
+			}
+		}
+
 		private void InventoryLB_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
 			if (InventoryLB.SelectedItem is not null)
 			{
 				Engine.SelectedItem = (InventoryLB.SelectedItem as DisplayableItem).Item;
 				Tick(GameEngine.Engine.ActionRequest.Use);
-			}
-		}
-
-		private void InventoryLB_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (InventoryLB.SelectedIndex >= 0)
-			{
-				this.DescriptionRTB.Text = (InventoryLB.SelectedItem as DisplayableItem).Item.Description;
 			}
 		}
 
@@ -127,6 +124,9 @@ namespace FormsUI
 						--displayable.Amount;
 					break;
 			}
+
+			InventoryLB.DataSource = null;
+			InventoryLB.DataSource = DisplayableInventory;
 		}
 
 		////////////////////////////////////////////////////////
